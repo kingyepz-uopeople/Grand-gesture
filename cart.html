@@ -149,9 +149,17 @@
         return item;
       }
 
+      function sanitizeId(id) {
+        if (!id) return id;
+        return id.replace(/[^a-z0-9-]/gi, "");
+      }
+
       function renderCart() {
         const escapeHTML = (str) => { const d = document.createElement("div"); d.textContent = str; return d.innerHTML; };
-        const cartItems = (JSON.parse(localStorage.getItem("cartItems")) || []).map(normalizeCartItem);
+        const cartItems = (JSON.parse(localStorage.getItem("cartItems")) || []).map(normalizeCartItem).map(item => {
+          if (item.id) item.id = sanitizeId(item.id);
+          return item;
+        });
 
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
@@ -194,11 +202,11 @@
                   <p class="cart-item-price">Price: ${item.displayPrice || formatKes(unitPrice)}</p>
                   <div class="cart-item-controls">
                     <div class="qty-controls" role="group" aria-label="Quantity controls for ${safeName}">
-                      <button type="button" class="qty-btn" data-action="decrease" data-id="${item.id}" aria-label="Decrease quantity">-</button>
+                      <button type="button" class="qty-btn" data-action="decrease" data-id="${escapeHTML(item.id)}" aria-label="Decrease quantity">-</button>
                       <span class="qty-value">${quantity}</span>
-                      <button type="button" class="qty-btn" data-action="increase" data-id="${item.id}" aria-label="Increase quantity">+</button>
+                      <button type="button" class="qty-btn" data-action="increase" data-id="${escapeHTML(item.id)}" aria-label="Increase quantity">+</button>
                     </div>
-                    <button type="button" class="remove-btn" data-action="remove" data-id="${item.id}">Remove</button>
+                    <button type="button" class="remove-btn" data-action="remove" data-id="${escapeHTML(item.id)}">Remove</button>
                   </div>
                 </div>
                 <p class="cart-item-total">${formatKes(lineTotal)}</p>

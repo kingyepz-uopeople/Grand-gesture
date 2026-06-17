@@ -70,7 +70,7 @@
     } else {
       cartItems.push(
         Object.assign({}, item, {
-          id: item.id || item.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now(),
+          id: item.id || item.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") + "-" + Date.now(),
           quantity: 1,
         })
       );
